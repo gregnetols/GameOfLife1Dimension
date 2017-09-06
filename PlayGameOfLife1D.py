@@ -4,7 +4,7 @@ import GOL1d
 
 gameInputs = {'height': 256,
               'width': 513,
-              'FPS': 30,
+              'FPS': 50,
               'black': (0,0,0),
               'red': (255,0,0),
               'grey': (30,30,30),
@@ -21,12 +21,15 @@ window = pygame.display.set_mode(((gameInputs['width'] * gameInputs['cellSize'])
 pygame.display.set_caption('Conway''s Game of Life in 1D')
 window.fill(gameInputs['black'])
 
-# initialize board
-board = GOL1d.initialize_board(gameInputs['height'], gameInputs['width'])
+# initialize game
 generation = 1
 
 # Main Loop
 while True:
+
+    # initialize board
+    if generation == 1:
+        board = GOL1d.initialize_board(gameInputs['height'], gameInputs['width'])
 
     # Check if user wants to exit
     for event in pygame.event.get():
@@ -35,19 +38,29 @@ while True:
             sys.exit()
 
     if generation < gameInputs['height']:
-        # Take game turn
+
+    # Take game turn
         board = GOL1d.game_of_life_turn(board, generation)
 
-        # draw grid
+
+     # draw grid
         for row in range(0, (gameInputs['height'] * gameInputs['cellSize']), gameInputs['cellSize']):
             for col in range(0, (gameInputs['width'] * gameInputs['cellSize']), gameInputs['cellSize']):
                 if board[row//gameInputs['cellSize']][col//gameInputs['cellSize']] == 1:
                     pygame.draw.rect(window, gameInputs['red'], [col, row, gameInputs['cellSize'], gameInputs['cellSize']])
-                else:
-                    pygame.draw.rect(window, gameInputs['black'], [col, row, gameInputs['cellSize'], gameInputs['cellSize']])
-                pygame.draw.rect(window, gameInputs['grey'], [col, row, gameInputs['cellSize'], gameInputs['cellSize']], 1)
 
-        generation = generation + 1
+    generation = generation + 1
+
+    #reset board
+    if generation > gameInputs['height']:
+        pygame.time.wait(1000)
+
+        for row in range(0, (gameInputs['height'] * gameInputs['cellSize']), gameInputs['cellSize']):
+            for col in range(0, (gameInputs['width'] * gameInputs['cellSize']), gameInputs['cellSize']):
+                pygame.draw.rect(window, gameInputs['black'], [col, row, gameInputs['cellSize'], gameInputs['cellSize']])
+
+        pygame.time.wait(1000)
+        generation = 1
 
     # redraw board
     pygame.display.update()
